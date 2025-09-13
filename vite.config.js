@@ -15,20 +15,20 @@ export default defineConfig({
     port: 3031,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8081',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
+  css: {
+    postcss: {
+      plugins: [tailwindcss()],
     },
   },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
     },
   },
 })
