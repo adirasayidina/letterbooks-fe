@@ -26,13 +26,13 @@ const isActiveLink = (routePath) => {
 
                 <!-- Right Column: Buttons -->
                 <div class="flex space-x-2">
-                    <RouterLink to="/auth/login" :class="[isActiveLink('/auth/login') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
+                    <RouterLink to="/" :class="[isActiveLink('/') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
+                        'px-3', 'py-2', 'rounded-md', 'border border-black']">
+                        Home
+                    </RouterLink>
+                    <RouterLink to="/auth/login" :class="[isActiveLink('/auth/login') | isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
                         'px-3', 'py-2', 'rounded-md', 'border border-black']">
                         Login
-                    </RouterLink>
-                    <RouterLink to="/auth/signup" :class="[isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
-                        'px-3', 'py-2', 'rounded-md', 'border border-black']">
-                        Sign Up
                     </RouterLink>
                 </div>
 

@@ -2,10 +2,15 @@
 import { RouterLink } from 'vue-router';
 import { reactive, defineProps, onMounted, ref } from 'vue';
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
+import { useAuthStore } from '@/stores/auth';
 
-defineProps({
+const authStore = useAuthStore()
+const toast = useToast();
+
+const props = defineProps({
     type: String
-});
+})
 
 const user = reactive({
     username: '',
@@ -17,6 +22,41 @@ const errors = reactive({
 })
 
 const showPassword = ref(false)
+
+const handleSubmit = async () => {
+    const theUser = {
+        username: user.username,
+        password: user.password
+    }
+
+    if (props.type === 'login') {
+        console.log("login")
+        try {
+            const response = await axios.post('/api/auth/login', theUser);
+            toast.success('Log in success');
+            console.log(response)
+            authStore.setAccessKey(response.data.access_token)
+
+        } catch (error) {
+            console.error('Error log in', error);
+            const errDetail = error.response?.data?.detail || 'Login failed. Please try again.';
+            toast.error(errDetail);
+        }
+    } else {
+        console.log("signup")
+        try {
+            const response = await axios.post('/api/auth/signup', theUser);
+            toast.success('Sign up success');
+            console.log(response)
+            authStore.setAccessKey(response.data.access_token)
+
+        } catch (error) {
+            console.error('Error sign up', error);
+            const errDetail = error.response?.data?.detail || 'Sign up failed. Please try again.';
+            toast.error(errDetail);
+        }
+    }
+};
 
 const validateUsername = () => {
     const regex = /^[a-zA-Z0-9_]*$/
@@ -75,9 +115,24 @@ const validateUsername = () => {
         </div>
     </form>
     <br />
-    
+
     <!-- button -->
-    <button type="submit" class="w-50 bg-black text-white py-2 px-3 rounded-md hover:bg-gray-800 transition">
+    <button @click="handleSubmit" type="submit"
+        class="w-50 bg-black text-white py-2 px-3 rounded-md hover:bg-gray-800 transition">
         {{ type === 'login' ? 'Log In' : 'Sign Up' }}
     </button>
+    <br />
+    <br />
+    <div v-if="type === 'login'">
+        <p class="text-sm text-gray-700">
+            New here? <RouterLink to="/auth/signup" class="underline hover:text-gray-400">Create an account
+            </RouterLink>
+        </p>
+    </div>
+    <div v-if="type === 'signup'">
+        <p class="text-sm text-gray-700">
+            Already have an account? <RouterLink to="/auth/login" class="underline hover:text-gray-400">Log in
+            </RouterLink>
+        </p>
+    </div>
 </template>
