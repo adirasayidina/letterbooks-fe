@@ -30,7 +30,6 @@ const handleSubmit = async () => {
     }
 
     if (props.type === 'login') {
-        console.log("login")
         try {
             const response = await axios.post('/api/auth/login', theUser);
             toast.success('Log in success');
@@ -43,11 +42,9 @@ const handleSubmit = async () => {
             toast.error(errDetail);
         }
     } else {
-        console.log("signup")
         try {
             const response = await axios.post('/api/auth/signup', theUser);
             toast.success('Sign up success');
-            console.log(response)
             authStore.setAccessKey(response.data.access_token)
 
         } catch (error) {
