@@ -1,12 +1,36 @@
 <script setup>
-// import logo from '@/assets/logo.png'
 import logo from '@/assets/book-navbar.png'
 import { RouterLink, useRoute } from 'vue-router';
+import { useAuthStore } from "@/stores/auth";
+import { computed } from "vue";
+import { jwtDecode } from "jwt-decode";
+import router from '@/router';
+
+const authStore = useAuthStore();
+const route = useRoute();
+
+const isLoggedIn = computed(() => !!authStore.accessKey);
+
+const username = computed(() => {
+    if (!authStore.accessKey) return null;
+    try {
+        const decoded = jwtDecode(authStore.accessKey);
+        return decoded.username || decoded.sub || "User";
+    } catch (err) {
+        console.error("Invalid token", err);
+        return null;
+    }
+});
 
 const isActiveLink = (routePath) => {
-    const route = useRoute();
     return route.path === routePath;
-}
+};
+
+const logout = () => {
+    authStore.accessKey = null; 
+    authStore.user = null;
+    router.push("/");
+};
 </script>
 
 <template>
@@ -30,12 +54,24 @@ const isActiveLink = (routePath) => {
                         'px-3', 'py-2', 'rounded-md', 'border border-black']">
                         Home
                     </RouterLink>
-                    <RouterLink to="/auth/login" :class="[isActiveLink('/auth/login') | isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
+
+                    <!-- Login if not -->
+                    <RouterLink v-if="!isLoggedIn" to="/auth/login" :class="[isActiveLink('/auth/login') || isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
                         'px-3', 'py-2', 'rounded-md', 'border border-black']">
                         Login
                     </RouterLink>
-                </div>
 
+                    <!-- Username if logged in -->
+                    <RouterLink v-if="isLoggedIn" to="/" :class="[isActiveLink('/auth') || isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
+                        'px-3', 'py-2', 'rounded-md', 'border border-black']">
+                        Hi, {{ username }}
+                    </RouterLink>
+
+                    <button v-if="isLoggedIn" @click="logout" :class="[isActiveLink('/auth') || isActiveLink('/auth/signup') ? 'bg-black text-white' : 'hover:bg-gray-400 hover:text-white text-black',
+                        'px-3', 'py-2', 'rounded-md', 'border border-black']">
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
     </nav>

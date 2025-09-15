@@ -1,9 +1,10 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import { reactive, defineProps, onMounted, ref } from 'vue';
+import { reactive, defineProps, ref } from 'vue';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
 import { useAuthStore } from '@/stores/auth';
+import router from '@/router';
 
 const authStore = useAuthStore()
 const toast = useToast();
@@ -33,9 +34,8 @@ const handleSubmit = async () => {
         try {
             const response = await axios.post('/api/auth/login', theUser);
             toast.success('Log in success');
-            console.log(response)
             authStore.setAccessKey(response.data.access_token)
-
+            router.push("/");
         } catch (error) {
             console.error('Error log in', error);
             const errDetail = error.response?.data?.detail || 'Login failed. Please try again.';
@@ -46,7 +46,7 @@ const handleSubmit = async () => {
             const response = await axios.post('/api/auth/signup', theUser);
             toast.success('Sign up success');
             authStore.setAccessKey(response.data.access_token)
-
+            router.push("/");
         } catch (error) {
             console.error('Error sign up', error);
             const errDetail = error.response?.data?.detail || 'Sign up failed. Please try again.';
