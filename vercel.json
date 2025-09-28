@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://letterbooks-be.fly.dev/$1"
+    }
+  ]
+}
