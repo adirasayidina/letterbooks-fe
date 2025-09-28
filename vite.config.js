@@ -15,7 +15,7 @@ export default defineConfig({
     port: 3031,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        target: 'https://letterbooks-be.fly.dev',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
